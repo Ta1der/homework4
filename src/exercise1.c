@@ -6,7 +6,7 @@ int main(int argc, char** argv) {
         scanf("%d", &array[i]);
         sum +=array[i];
  }
-    double ot = sum/10;
+    float ot = sum/10;
     printf("%.2f", ot);
     return 0;
 }
