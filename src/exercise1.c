@@ -7,6 +7,6 @@ int main(int argc, char** argv) {
         sum +=array[i];
  }
     double ot = sum/10;
-    printf("%.2f", ot);
+    printf("%.2f", ot + 0.0000001);
     return 0;
 }
