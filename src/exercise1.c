@@ -1,21 +1,13 @@
 #include <stdio.h>
-
-int main() {
-    double array[10], sum = 0;
-    for(int i = 0; i < 10; i++) {
+int main(int argc, char** argv) {
+    double array[10];
+    double sum = 0;
+    for(int i = 0; i < 10; ++i) {
         scanf("%lf", &array[i]);
-        sum += array[i];
-    }
-    double average = sum / 10;
-    long long cents = (long long)(average * 1000 + 0.5);
-    if (cents % 10 >= 5) {
-        cents = cents / 10 + 1;
-    } 
-    else {
-        cents = cents / 10;
-    }
+        sum +=array[i];
+ }
+    double ot = (sum/10);
 
-    double rounded = cents / 100.0;
-    printf("%.2f\n", rounded);
+    printf("%.2f", ot);
     return 0;
 }
