@@ -4,10 +4,10 @@ int main(int argc, char** argv) {
     int k = atoi(argv[1]);
     int array[10];
     for(int i = 0; i < 10; ++i) {
-        scanf("%d", &array[i]);
+        scanf("%lf", &array[i]);
  }
     for(int i = 0; i < 10; ++i) {
-        printf("%d ", array[(i + (10 - k)) % 10]);
+        printf("%.2f", array[(i + (10 - k)) % 10]);
     }
 
 }

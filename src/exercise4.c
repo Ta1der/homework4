@@ -5,13 +5,13 @@ int main(int argc, char** argv) {
     int x = atoi(argv[1]);
     int array[10];
     for(int i = 0; i < 10; ++i) {
-        scanf("%d", &array[i]);
+        scanf("%lf", &array[i]);
  }
     for(int i = 0; i < 9; ++i) {
         if (i==k){
-            printf("%d ", x);
+            printf("%.2f", x);
         }
-        printf("%d ",array[i]);
+        printf("%.2f",array[i]);
     }
 
 }
