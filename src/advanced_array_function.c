@@ -43,57 +43,55 @@ int compare_intervals(const void* a, const void* b) {
     return interval1[0] - interval2[0];
 }
 
+int compare_intervals(const void* a, const void* b) {
+    int* interval1 = (int*)a;
+    int* interval2 = (int*)b;
+    return interval1[0] - interval2[0];
+}
+
 int* merge(int* intervals, int intervalsSize, int* returnSize) {
     if (intervalsSize == 0) {
         *returnSize = 0;
         return NULL;
     }
-    int** temp_result = (int**)malloc(intervalsSize * sizeof(int*));
-    for (int i = 0; i < intervalsSize; i++) {
-        temp_result[i] = (int*)malloc(2 * sizeof(int));
-    }
-    int** intervals_2d = (int**)malloc(intervalsSize * sizeof(int*));
-    for (int i = 0; i < intervalsSize; i++) {
-        intervals_2d[i] = &intervals[i * 2];
-    }
     
-    qsort(intervals_2d, intervalsSize, sizeof(int*), compare_intervals);
-
+    // Сортируем интервалы
+    qsort(intervals, intervalsSize, 2 * sizeof(int), compare_intervals);
+    
+    // Временный массив для результата
+    int* temp = (int*)malloc(intervalsSize * 2 * sizeof(int));
     int result_count = 0;
-    temp_result[0][0] = intervals_2d[0][0];
-    temp_result[0][1] = intervals_2d[0][1];
+    
+    temp[0] = intervals[0];
+    temp[1] = intervals[1];
     
     for (int i = 1; i < intervalsSize; i++) {
-        int* current = intervals_2d[i];
-        int* last_merged = temp_result[result_count];
+        int current_start = intervals[i * 2];
+        int current_end = intervals[i * 2 + 1];
+        int last_end = temp[result_count * 2 + 1];
         
-        if (current[0] <= last_merged[1]) {
-            // Интервалы пересекаются - объединяем
-            if (current[1] > last_merged[1]) {
-                last_merged[1] = current[1];
+        if (current_start <= last_end) {
+            // Объединяем интервалы
+            if (current_end > last_end) {
+                temp[result_count * 2 + 1] = current_end;
             }
         } else {
-            // Не пересекаются - добавляем новый интервал
+            // Новый интервал
             result_count++;
-            temp_result[result_count][0] = current[0];
-            temp_result[result_count][1] = current[1];
+            temp[result_count * 2] = current_start;
+            temp[result_count * 2 + 1] = current_end;
         }
     }
     
-    result_count++; 
-    int* result = (int*)malloc(result_count * 2 * sizeof(int));
-    for (int i = 0; i < result_count; i++) {
-        result[i * 2] = temp_result[i][0];
-        result[i * 2 + 1] = temp_result[i][1];
-    }
-
-    for (int i = 0; i < intervalsSize; i++) {
-        free(temp_result[i]);
-    }
-    free(temp_result);
-    free(intervals_2d);
+    result_count++; // Переводим из индекса в количество
     
-    *returnSize = result_count * 2;
+    // Копируем результат в массив нужного размера
+    int* result = (int*)malloc(result_count * 2 * sizeof(int));
+    for (int i = 0; i < result_count * 2; i++) {
+        result[i] = temp[i];
+    }
+    
+    free(temp);
+    *returnSize = result_count;
     return result;
 }
-
