@@ -7,8 +7,14 @@ int max_subarray_sum(int* nums, int size) {
     int current_sum = nums[0];
     
     for (int i = 1; i < size; i++) {
-        current_sum = (nums[i] > current_sum + nums[i]) ? nums[i] : current_sum + nums[i];
-
+        // Выбираем максимум между текущим элементом и суммой предыдущих + текущий
+        if (current_sum + nums[i] > nums[i]) {
+            current_sum = current_sum + nums[i];
+        } else {
+            current_sum = nums[i];
+        }
+        
+        // Обновляем общий максимум
         if (current_sum > max_sum) {
             max_sum = current_sum;
         }
@@ -17,6 +23,7 @@ int max_subarray_sum(int* nums, int size) {
     return max_sum;
 }
 
+// 2. Длина самой длинной непрерывной строго возрастающей подпоследовательности
 int length_of_lis(int* nums, int numsSize) {
     if (numsSize == 0) return 0;
     
@@ -36,50 +43,48 @@ int length_of_lis(int* nums, int numsSize) {
     
     return max_length;
 }
-#include <stdlib.h>
+
+// Вспомогательная функция для сравнения интервалов (для сортировки)
 int compare_intervals(const void* a, const void* b) {
-    int* interval1 = (int*)a;
-    int* interval2 = (int*)b;
+    const int* interval1 = (const int*)a;
+    const int* interval2 = (const int*)b;
     return interval1[0] - interval2[0];
 }
 
-int compare_intervals(const void* a, const void* b) {
-    int* interval1 = (int*)a;
-    int* interval2 = (int*)b;
-    return interval1[0] - interval2[0];
-}
-
+// 3. Объединение интервалов
 int* merge(int* intervals, int intervalsSize, int* returnSize) {
     if (intervalsSize == 0) {
         *returnSize = 0;
         return NULL;
     }
     
-    // Сортируем интервалы
+    // Сортируем интервалы по начальной точке
     qsort(intervals, intervalsSize, 2 * sizeof(int), compare_intervals);
     
-    // Временный массив для результата
-    int* temp = (int*)malloc(intervalsSize * 2 * sizeof(int));
+    // Временный массив для хранения результата
+    int* temp_result = (int*)malloc(intervalsSize * 2 * sizeof(int));
     int result_count = 0;
     
-    temp[0] = intervals[0];
-    temp[1] = intervals[1];
+    // Добавляем первый интервал
+    temp_result[0] = intervals[0];
+    temp_result[1] = intervals[1];
     
+    // Объединяем интервалы
     for (int i = 1; i < intervalsSize; i++) {
         int current_start = intervals[i * 2];
         int current_end = intervals[i * 2 + 1];
-        int last_end = temp[result_count * 2 + 1];
+        int* last_interval = &temp_result[result_count * 2];
         
-        if (current_start <= last_end) {
-            // Объединяем интервалы
-            if (current_end > last_end) {
-                temp[result_count * 2 + 1] = current_end;
+        if (current_start <= last_interval[1]) {
+            // Интервалы пересекаются - объединяем
+            if (current_end > last_interval[1]) {
+                last_interval[1] = current_end;
             }
         } else {
-            // Новый интервал
+            // Не пересекаются - добавляем новый интервал
             result_count++;
-            temp[result_count * 2] = current_start;
-            temp[result_count * 2 + 1] = current_end;
+            temp_result[result_count * 2] = current_start;
+            temp_result[result_count * 2 + 1] = current_end;
         }
     }
     
@@ -88,10 +93,10 @@ int* merge(int* intervals, int intervalsSize, int* returnSize) {
     // Копируем результат в массив нужного размера
     int* result = (int*)malloc(result_count * 2 * sizeof(int));
     for (int i = 0; i < result_count * 2; i++) {
-        result[i] = temp[i];
+        result[i] = temp_result[i];
     }
     
-    free(temp);
+    free(temp_result);
     *returnSize = result_count;
     return result;
 }
